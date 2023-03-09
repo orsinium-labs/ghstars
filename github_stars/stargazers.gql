@@ -1,0 +1,58 @@
+query getRepos($org_name: String!) {
+  organization(login: $org_name) {
+    repositories(first: 100, orderBy: { field: STARGAZERS, direction: DESC }) {
+      totalCount
+      nodes {
+        name
+      }
+    }
+  }
+}
+
+query getStargazers(
+  $number_of_stargazers: Int!
+  $org_name: String!
+  $repo_name: String!
+  $cursor: String
+) {
+  repository(name: $repo_name, owner: $org_name) {
+    stargazers(first: $number_of_stargazers, after: $cursor) {
+      totalCount
+      edges {
+        cursor
+      }
+      nodes {
+        login
+        followers {
+          totalCount
+        }
+        # list top repositories of the user
+        repositories(
+          orderBy: { field: STARGAZERS, direction: DESC }
+          first: 2
+          isFork: false
+        ) {
+          nodes {
+            name
+            stargazerCount
+            owner {
+              login
+            }
+          }
+        }
+        # pinned repositories
+        pinnedItems(first: 6) {
+          nodes {
+            ... on Repository {
+              name
+              owner {
+                login
+              }
+              stargazerCount
+            }
+          }
+        }
+      }
+    }
+  }
+}

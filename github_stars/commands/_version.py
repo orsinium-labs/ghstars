@@ -9,10 +9,6 @@ class Version(Command):
     """Print the version of the tool.
     """
 
-    @staticmethod
-    def init_parser(parser: ArgumentParser) -> None:
-        pass
-
     def run(self) -> int:
         from github_stars import __version__
         self.print(__version__)
