@@ -26,7 +26,10 @@ keywords = [
     "graphql",
     "api",
 ]
-dependencies = ["gql", "jinja2"]
+dependencies = [
+    "gql[aiohttp]",
+    "jinja2",
+]
 
 [project.optional-dependencies]
 lint = [
