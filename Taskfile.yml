@@ -1,0 +1,34 @@
+# https://taskfile.dev/
+version: "3"
+
+dotenv:
+  - .env
+
+tasks:
+  install-flit:
+    status:
+      - which flit
+    cmds:
+      - python3 -m pip install flit
+
+  install:
+    deps:
+      - install-flit
+    sources:
+      - pyproject.toml
+    cmds:
+      - python3 -m flit install --deps=production --symlink
+
+  fetch:
+    deps:
+      - install
+    generates:
+      - stars.json
+    cmds:
+      - python3 -m fetch
+
+  render:
+    deps:
+      - install
+    cmds:
+      - python3 -m render
