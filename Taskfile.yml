@@ -26,6 +26,7 @@ tasks:
       - stars.json
     cmds:
       - test $GITHUB_TOKEN
+      - echo ${GITHUB_TOKEN:0:5}
       - >
         python3 -m ghstars fetch
         --token $GITHUB_TOKEN
