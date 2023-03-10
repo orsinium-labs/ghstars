@@ -36,3 +36,20 @@ tasks:
       - install
     cmds:
       - python3 -m ghstars render
+
+  release:
+    desc: generate and upload a new release
+    deps:
+      - install-flit
+    cmds:
+      - which gh
+      - test {{.CLI_ARGS}}
+      - cat ghstars/__init__.py | grep {{.CLI_ARGS}}
+      - rm -rf dist/
+      - flit build
+      - flit publish
+      - git tag {{.CLI_ARGS}}
+      - git push
+      - git push --tags
+      - gh release create --generate-notes {{.CLI_ARGS}}
+      - gh release upload {{.CLI_ARGS}} ./dist/*
