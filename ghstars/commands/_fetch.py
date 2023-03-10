@@ -5,8 +5,10 @@ import asyncio
 from functools import cached_property
 import json
 from pathlib import Path
+import backoff
 from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
+from gql.transport.exceptions import TransportServerError
 
 from ._base import Command
 
@@ -105,6 +107,7 @@ class Fetch(Command):
                 break
         return result
 
+    @backoff.on_exception(backoff.expo, TransportServerError)
     async def _query_repo_page(
         self,
         session,

@@ -29,6 +29,7 @@ keywords = [
 dependencies = [
     "gql[aiohttp]",
     "jinja2",
+    "backoff",
 ]
 
 [project.optional-dependencies]
