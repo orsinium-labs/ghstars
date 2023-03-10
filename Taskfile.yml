@@ -25,12 +25,12 @@ tasks:
     generates:
       - stars.json
     cmds:
-      - test $GITHUB_TOKEN
-      - echo ${GITHUB_TOKEN:38:40}
-      # - >
-      #   python3 -m ghstars fetch
-      #   --token $GITHUB_TOKEN
-      #   --orgs life4 orsinium-labs
+      - test ${GITHUB_TOKEN}
+      - test ${#GITHUB_TOKEN} -eq 40
+      - >
+        python3 -m ghstars fetch
+        --token ${GITHUB_TOKEN}
+        --orgs life4 orsinium-labs
 
   render:
     deps:

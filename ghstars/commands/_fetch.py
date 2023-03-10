@@ -48,6 +48,7 @@ class Fetch(Command):
 
     @cached_property
     def _client(self) -> Client:
+        assert len(self.args.token) == 40
         transport = AIOHTTPTransport(
             url="https://api.github.com/graphql",
             headers={'Authorization': f'bearer {self.args.token}'},
