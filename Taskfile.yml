@@ -27,13 +27,12 @@ tasks:
     cmds:
       - test $GITHUB_TOKEN
       - >
-        python3 -m github_stars fetch
+        python3 -m ghstars fetch
         --token $GITHUB_TOKEN
         --orgs life4 orsinium-labs
 
   render:
     deps:
       - install
-      - fetch
     cmds:
-      - python3 -m github_stars render
+      - python3 -m ghstars render

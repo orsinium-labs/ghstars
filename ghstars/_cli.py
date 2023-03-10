@@ -8,7 +8,7 @@ from .commands import Command, commands
 
 
 def main(argv: list[str], stdout: TextIO) -> int:
-    parser = ArgumentParser('github-stars')
+    parser = ArgumentParser('ghstars')
     subparsers = parser.add_subparsers()
     parser.set_defaults(cmd=None)
 

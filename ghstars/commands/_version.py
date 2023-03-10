@@ -10,6 +10,6 @@ class Version(Command):
     """
 
     def run(self) -> int:
-        from github_stars import __version__
+        from ghstars import __version__
         self.print(__version__)
         return 0

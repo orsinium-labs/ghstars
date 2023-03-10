@@ -3,7 +3,7 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "github-stars"
+name = "ghstars"
 authors = [
     {name = "Gram", email = "git@orsinium.dev"},
 ]
@@ -39,16 +39,13 @@ lint = [
 ]
 
 [project.urls]
-Source = "https://github.com/orsinium-labs/github-stars"
+Source = "https://github.com/orsinium-labs/ghstars"
 
 [project.scripts]
-github-stars = "github_stars:entrypoint"
-
-[tool.flit.module]
-name = "github_stars"
+ghstars = "ghstars:entrypoint"
 
 [tool.mypy]
-files = ["github_stars"]
+files = ["ghstars"]
 python_version = 3.8
 ignore_missing_imports = true
 # follow_imports = "silent"
@@ -66,7 +63,7 @@ skip = ".venvs/"
 
 [tool.pytest.ini_options]
 addopts = [
-    "--cov=github_stars",
+    "--cov=ghstars",
     "--cov-report=html",
     "--cov-report=term-missing:skip-covered",
     "--cov-fail-under=80",
