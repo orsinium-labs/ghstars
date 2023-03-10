@@ -3,7 +3,7 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "github_stars"
+name = "github-stars"
 authors = [
     {name = "Gram", email = "git@orsinium.dev"},
 ]
@@ -38,12 +38,14 @@ lint = [
     "unify",
 ]
 
-
 [project.urls]
 Source = "https://github.com/orsinium-labs/github-stars"
 
 [project.scripts]
 github-stars = "github_stars:entrypoint"
+
+[tool.flit.module]
+name = "github_stars"
 
 [tool.mypy]
 files = ["github_stars"]

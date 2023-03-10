@@ -26,7 +26,7 @@ class Fetch(Command):
             help='path where to save the result',
         )
         parser.add_argument(
-            '--orgs', nargs='+',
+            '--orgs', nargs='+', required=True,
             help='organizations to fetch stargazers for',
         )
         parser.add_argument(
@@ -40,8 +40,7 @@ class Fetch(Command):
 
     async def run_async(self) -> int:
         result = {}
-        orgs = ['life4', 'orsinium-labs']
-        for org_name in orgs:
+        for org_name in self.args.orgs:
             result[org_name] = await self._query_org(org_name)
         with self.args.output.open('w') as stream:
             json.dump(result, stream, indent=2)
