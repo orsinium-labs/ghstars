@@ -107,7 +107,11 @@ class Fetch(Command):
                 break
         return result
 
-    @backoff.on_exception(backoff.expo, TransportServerError, max_tries=5)
+    @backoff.on_exception(
+        backoff.expo,
+        exception=(TransportServerError, asyncio.TimeoutError),
+        max_tries=5,
+    )
     async def _query_repo_page(
         self,
         session,

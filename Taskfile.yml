@@ -11,6 +11,13 @@ tasks:
     cmds:
       - python3 -m pip install flit
 
+  install-enc:
+    status:
+      - which enc
+    cmds:
+      - go install github.com/life4/enc@latest
+      - which enc
+
   install:
     deps:
       - install-flit
@@ -22,20 +29,31 @@ tasks:
   fetch:
     deps:
       - install
+      - install-enc
     generates:
       - stars.json
     cmds:
-      - test ${GITHUB_TOKEN}
+      - test $GITHUB_TOKEN
       - test ${#GITHUB_TOKEN} -eq 40
+      - test $ENC_PASSWORD
       - >
         python3 -m ghstars fetch
-        --token ${GITHUB_TOKEN}
+        --token $GITHUB_TOKEN
         --orgs life4 orsinium-labs
+      - defer: rm stars.json
+      - rm -f stars.json.gz
+      - gzip -k -9 stars.json
+      - cat stars.json.gz | enc encrypt -p $ENC_PASSWORD > stars.json.gz.enc
 
   render:
     deps:
       - install
     cmds:
+      - test $ENC_PASSWORD
+      - cat stars.json.gz.enc | enc decrypt -p $ENC_PASSWORD > stars.json.gz
+      - defer: rm -f stars.json.gz
+      - gzip -d stars.json.gz
+      - defer: rm stars.json
       - python3 -m ghstars render
 
   release:

@@ -1,4 +1,4 @@
 [build]
-publish = "docs/build"
+publish = "public"
 command = "./netlify.sh"
 environment = {PYTHON_VERSION = "3.8"}
