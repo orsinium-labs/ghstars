@@ -4,6 +4,9 @@ version: "3"
 dotenv:
   - .env
 
+vars:
+  ENC: enc
+
 tasks:
   install-flit:
     status:
@@ -13,11 +16,10 @@ tasks:
 
   install-enc:
     status:
-      - which enc
+      - which {{.ENC}}
     cmds:
       - go install github.com/life4/enc@latest
-      - dir /opt/buildhome/.gimme/versions/go1.19.7.linux.amd64/bin
-      - which enc
+      - which {{.ENC}}
 
   install:
     deps:
@@ -44,7 +46,7 @@ tasks:
       - defer: rm stars.json
       - rm -f stars.json.gz
       - gzip -k -9 stars.json
-      - cat stars.json.gz | enc encrypt -p $ENC_PASSWORD > stars.json.gz.enc
+      - cat stars.json.gz | {{.ENC}} encrypt -p $ENC_PASSWORD > stars.json.gz.enc
 
   render:
     deps:
@@ -52,7 +54,7 @@ tasks:
       - install-enc
     cmds:
       - test $ENC_PASSWORD
-      - cat stars.json.gz.enc | enc decrypt -p $ENC_PASSWORD > stars.json.gz
+      - cat stars.json.gz.enc | {{.ENC}} decrypt -p $ENC_PASSWORD > stars.json.gz
       - defer: rm -f stars.json.gz
       - gzip -d stars.json.gz
       - defer: rm stars.json
