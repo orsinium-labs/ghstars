@@ -4,10 +4,6 @@ version: "3"
 dotenv:
   - .env
 
-vars:
-  ENC_VERSION: "1.1.1"
-  ENC_DIST: enc_{{.ENC_VERSION}}_{{OS}}_x86_64.tar.gz
-
 tasks:
   install-flit:
     status:
@@ -19,12 +15,9 @@ tasks:
     status:
       - which enc
     cmds:
-      - wget https://github.com/life4/enc/releases/download/{{.ENC_VERSION}}/{{.ENC_DIST}}
-      - tar -xf enc_*.tar.gz
-      - defer: rm enc_*.tar.gz
-      - chmod +x enc
-      - mv enc ~/.local/bin
-      - enc version
+      - go install github.com/life4/enc@latest
+      - dir /opt/buildhome/.gimme/versions/go1.19.7.linux.amd64/bin
+      - which enc
 
   install:
     deps:
