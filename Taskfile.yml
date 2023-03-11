@@ -48,6 +48,7 @@ tasks:
   render:
     deps:
       - install
+      - install-enc
     cmds:
       - test $ENC_PASSWORD
       - cat stars.json.gz.enc | enc decrypt -p $ENC_PASSWORD > stars.json.gz
