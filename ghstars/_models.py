@@ -25,6 +25,16 @@ class User:
     stars: list[Repo]   # repos that the user starred
 
     @property
+    def weight(self) -> int:
+        """Heuristic "notability" of a user.
+
+        Used to sort users when rendering the web page.
+        """
+        if self.top_repo:
+            return max(self.top_repo.stars // 2, self.followers)
+        return self.followers
+
+    @property
     def is_notable(self) -> bool:
         if self.followers < 200:
             return False
@@ -86,7 +96,7 @@ class Stars:
             ))
         return sorted(
             grouped.values(),
-            key=lambda u: u.followers,
+            key=lambda u: u.weight,
             reverse=True,
         )
 

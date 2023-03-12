@@ -30,7 +30,8 @@ class TopFollowed(Command):
         with self.args.input.open('r') as stream:
             raw_data = json.load(stream)
         stars = Stars(raw_data)
-        for user in stars.users:
+        users = sorted(stars.users, key=lambda u: u.followers, reverse=True)
+        for user in users:
             if user.followers < self.args.min_followers:
                 continue
             self.print(f'{user.name:20} {user.followers:>5}')
