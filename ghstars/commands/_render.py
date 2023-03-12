@@ -35,6 +35,10 @@ class Render(Command):
             '--title', default='Most notable stargazers',
             help='HTML page title',
         )
+        parser.add_argument(
+            '--min-followers', type=int, default=200,
+            help='filter out users with fewer followers',
+        )
 
     def run(self) -> int:
         env = Environment(loader=FileSystemLoader(self.args.template.parent))
@@ -42,8 +46,9 @@ class Render(Command):
         with self.args.input.open('r') as stream:
             raw_data = json.load(stream)
         stars = Stars(raw_data)
+        top_users = stars.get_top_users(min_followers=self.args.min_followers)
         content = template.render(
-            stars=stars,
+            top_users=top_users,
             title=self.args.title,
         )
         output_path: Path = self.args.output

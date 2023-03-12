@@ -34,14 +34,6 @@ class User:
             return max(self.top_repo.stars // 2, self.followers)
         return self.followers
 
-    @property
-    def is_notable(self) -> bool:
-        if self.followers < 200:
-            return False
-        if self.followers > 2000:
-            return True
-        return bool(self.top_repo or self.top_pin)
-
     @cached_property
     def top_repo(self) -> Repo | None:
         if not self.repos:
@@ -78,10 +70,12 @@ class Star:
 class Stars:
     items: dict[str, dict[str, dict[str, dict[str, Any]]]]
 
-    @property
-    def top_users(self) -> Iterator[User]:
+    def get_top_users(self, min_followers: int) -> Iterator[User]:
         for user in self.users:
-            if user.is_notable:
+            if user.followers < min_followers:
+                continue
+            is_notable = user.top_repo or user.top_pin or user.followers > 2000
+            if is_notable:
                 yield user
 
     @cached_property
