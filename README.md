@@ -10,3 +10,9 @@ Demo: [stars.orsinium.dev](https://stars.orsinium.dev/)
 1. [Generate GitHub API token](https://github.com/settings/tokens)
 1. Fetch data: `ghstars fetch --token YOUR_TOKEN --orgs YOUR_ORG`
 1. Generate HTML: `ghstars render`
+
+## Other commands
+
+There are a few more commands to analyze the fetched data:
+
+1. `ghstars top-authors`: show most popular projects authored by your stargazers.
