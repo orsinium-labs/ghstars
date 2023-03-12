@@ -60,6 +60,30 @@ tasks:
       - defer: rm stars.json
       - python3 -m ghstars render
 
+  top-authors:
+    deps:
+      - install
+      - install-enc
+    cmds:
+      - test $ENC_PASSWORD
+      - cat stars.json.gz.enc | {{.ENC}} decrypt -p $ENC_PASSWORD > stars.json.gz
+      - defer: rm -f stars.json.gz
+      - gzip -d stars.json.gz
+      - defer: rm stars.json
+      - python3 -m ghstars top-authors
+
+  top-followed:
+    deps:
+      - install
+      - install-enc
+    cmds:
+      - test $ENC_PASSWORD
+      - cat stars.json.gz.enc | {{.ENC}} decrypt -p $ENC_PASSWORD > stars.json.gz
+      - defer: rm -f stars.json.gz
+      - gzip -d stars.json.gz
+      - defer: rm stars.json
+      - python3 -m ghstars top-followed
+
   release:
     desc: generate and upload a new release
     deps:

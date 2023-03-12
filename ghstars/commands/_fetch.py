@@ -28,8 +28,12 @@ class Fetch(Command):
             help='path where to save the result',
         )
         parser.add_argument(
-            '--orgs', nargs='+', required=True,
+            '--orgs', nargs='*',
             help='organizations to fetch stargazers for',
+        )
+        parser.add_argument(
+            '--repos', nargs='*',
+            help='repositories to fetch stargazers for',
         )
         parser.add_argument(
             '--max-pages', type=int, default=30,
@@ -41,9 +45,22 @@ class Fetch(Command):
         )
 
     async def run_async(self) -> int:
+        if not self.args.orgs and not self.args.repos:
+            self.print('either --orgs or --repos must be specified')
+            return 1
+
         result = {}
-        for org_name in self.args.orgs:
-            result[org_name] = await self._query_org(org_name)
+        async with self._client as session:
+            # fetch orgs
+            for org_name in (self.args.orgs or []):
+                result[org_name] = await self._query_org(session, org_name)
+            # fetch specific repos
+            for repo in (self.args.repos or []):
+                org_name, repo_name = repo.split('/')
+                repo_info = await self._query_repo(session, org_name, repo_name)
+                org_repos = result.setdefault(org_name, {})
+                org_repos[repo_name] = repo_info
+
         with self.args.output.open('w') as stream:
             json.dump(result, stream, indent=2)
         return 0
@@ -62,28 +79,27 @@ class Fetch(Command):
         path = Path(__file__).parent.parent / 'stargazers.gql'
         return gql(path.read_text())
 
-    async def _query_org(self, org_name: str) -> dict[str, dict]:
-        async with self._client as session:
-            self.print(f'querying {org_name}')
-            resp = await session.execute(
-                document=self._document,
-                variable_values={'org_name': org_name},
-                operation_name='getRepos',
-            )
-            assert resp['organization']['repositories']['totalCount'] <= 100
-            repos = resp['organization']['repositories']['nodes']
+    async def _query_org(self, session, org_name: str) -> dict[str, dict]:
+        self.print(f'querying {org_name}')
+        resp = await session.execute(
+            document=self._document,
+            variable_values={'org_name': org_name},
+            operation_name='getRepos',
+        )
+        assert resp['organization']['repositories']['totalCount'] <= 100
+        repos = resp['organization']['repositories']['nodes']
 
-            # concurrently query info about all repos
-            result = {}
-            tasks = []
-            for repo in repos:
-                tasks.append(self._query_repo(session, org_name, repo['name']))
-            self.print(f'awaiting additional info for {org_name} repositories')
-            star_infos = await asyncio.gather(*tasks)
-            for repo, stars in zip(repos, star_infos):
-                result[repo['name']] = stars
+        # concurrently query info about all repos
+        result = {}
+        tasks = []
+        for repo in repos:
+            tasks.append(self._query_repo(session, org_name, repo['name']))
+        self.print(f'awaiting additional info for {org_name} repositories')
+        star_infos = await asyncio.gather(*tasks)
+        for repo, stars in zip(repos, star_infos):
+            result[repo['name']] = stars
 
-            return result
+        return result
 
     async def _query_repo(
         self,

@@ -25,12 +25,14 @@ class User:
     stars: list[Repo]   # repos that the user starred
 
     @property
-    def is_notable(self) -> bool:
-        if self.followers < 200:
-            return False
-        if self.followers > 2000:
-            return True
-        return bool(self.top_repo or self.top_pin)
+    def weight(self) -> int:
+        """Heuristic "notability" of a user.
+
+        Used to sort users when rendering the web page.
+        """
+        if self.top_repo:
+            return max(self.top_repo.stars // 2, self.followers)
+        return self.followers
 
     @cached_property
     def top_repo(self) -> Repo | None:
@@ -68,10 +70,12 @@ class Star:
 class Stars:
     items: dict[str, dict[str, dict[str, dict[str, Any]]]]
 
-    @property
-    def top_users(self) -> Iterator[User]:
+    def get_top_users(self, min_followers: int) -> Iterator[User]:
         for user in self.users:
-            if user.is_notable:
+            if user.followers < min_followers:
+                continue
+            is_notable = user.top_repo or user.top_pin or user.followers > 2000
+            if is_notable:
                 yield user
 
     @cached_property
@@ -86,7 +90,7 @@ class Stars:
             ))
         return sorted(
             grouped.values(),
-            key=lambda u: u.followers,
+            key=lambda u: u.weight,
             reverse=True,
         )
 
