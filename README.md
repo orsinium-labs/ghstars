@@ -8,7 +8,9 @@ Demo: [stars.orsinium.dev](https://stars.orsinium.dev/)
 
 1. Install: `python3 -m pip install ghstars`
 1. [Generate GitHub API token](https://github.com/settings/tokens)
-1. Fetch data: `ghstars fetch --token YOUR_TOKEN --orgs YOUR_ORG`
+1. Fetch data: `ghstars fetch --token YOUR_TOKEN`. Requires one (or several) of the following flags:
+    1. `--orgs life4`: space-separated list of organizations.
+    1. `--repos life4/textdistance`: space-separated list of repositories.
 1. Generate HTML: `ghstars render`
 
 ## Other commands
