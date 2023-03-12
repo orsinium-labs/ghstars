@@ -16,3 +16,4 @@ Demo: [stars.orsinium.dev](https://stars.orsinium.dev/)
 There are a few more commands to analyze the fetched data:
 
 1. `ghstars top-authors`: show most popular projects authored by your stargazers.
+1. `ghstars top-followed`: show stargazers with the most followers.
